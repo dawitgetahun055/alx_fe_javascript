@@ -46,7 +46,7 @@ function addQuote() {
   const newQuoteCategory = document.getElementById("newQuoteCategory").value;
 
   if (newQuoteText && newQuoteCategory) {
-    Quotes.push({ Text: newQuoteText, category: newQuoteCategory });
+    Quotes.appendChild({ Text: newQuoteText, category: newQuoteCategory });
     alert("Quote added successfully!");
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
