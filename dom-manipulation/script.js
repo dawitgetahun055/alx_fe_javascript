@@ -20,9 +20,8 @@ const Quotes = [
 function showRandomQuote() {
   const quoteDisplay = document.getElementById("quoteDisplay");
   const randomQuote = Math.floor(Math.random() * Quotes.length);
-  quoteDisplay.textContent = Quotes[randomQuote].text;
+  quoteDisplay.innerHTML = `<quotes>${Quotes[randomQuote].text}</quotes>`;
 }
-showRandomQuote();
 
 newQuote.addEventListener("click", showRandomQuote);
 
