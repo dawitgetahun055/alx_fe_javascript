@@ -25,6 +25,22 @@ function showRandomQuote() {
 
 newQuote.addEventListener("click", showRandomQuote);
 
+const createAddQuoteForm = function () {
+  const Form = document.getElementsByTagName("form")[0];
+  Form.insertAdjacentHTML(
+    "beforebegin",
+    `<input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input
+      id="newQuoteCategory"
+      type="text"
+      placeholder="Enter quote category"
+    />
+    <button onclick="addQuote()">Add Quote</button>`
+  );
+};
+
+createAddQuoteForm();
+
 function addQuote() {
   const newQuoteText = document.getElementById("newQuoteText").value;
   const newQuoteCategory = document.getElementById("newQuoteCategory").value;
