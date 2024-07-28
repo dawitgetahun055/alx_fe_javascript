@@ -33,9 +33,7 @@ const createAddQuoteForm = function () {
       type="text"
       placeholder="Enter quote category"
     />
-    <button onclick="addQuote()">Add Quote</button><br><br>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-    <button onclick="exportToJson()">Export Quotes</button>`;
+    <button onclick="addQuote()">Add Quote</button><br><br>`;
 
   document.body.appendChild(Form);
 };
@@ -47,13 +45,15 @@ function addQuote() {
   const newQuoteCategory = document.getElementById("newQuoteCategory").value;
 
   if (newQuoteText && newQuoteCategory) {
-    Quotes.appendChild({ Text: newQuoteText, category: newQuoteCategory });
+    Quotes.push({ text: newQuoteText, category: newQuoteCategory });
     alert("Quote added successfully!");
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
   } else {
     alert("Please enter both a quote and a category");
   }
+
+  saveQuotes();
 }
 
 function importFromJsonFile(event) {
