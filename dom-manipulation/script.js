@@ -133,6 +133,35 @@ async function fetchQuotesFromServer() {
   }
 }
 
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+    return [];
+  }
+}
+
+// Function to post a new quote to the server
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(quote),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error posting quote to server:", error);
+  }
+}
+
 // Function to periodically fetch data
 function startPeriodicFetch(interval = 60000) {
   setInterval(async () => {
@@ -141,6 +170,7 @@ function startPeriodicFetch(interval = 60000) {
   }, interval);
 }
 
+// Function to sync local data with server data
 function syncWithServer(serverQuotes) {
   const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
   const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
@@ -190,3 +220,25 @@ async function testSync() {
 
 // Call testSync to verify the functionality
 testSync();
+
+document
+  .getElementById("quoteForm")
+  .addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const quoteText = document.getElementById("quoteText").value;
+    if (quoteText) {
+      const newQuote = {
+        title: quoteText,
+        body: quoteText,
+        userId: 1,
+      };
+      const postedQuote = await postQuoteToServer(newQuote);
+      if (postedQuote) {
+        const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+        localQuotes.push(postedQuote);
+        localStorage.setItem("quotes", JSON.stringify(localQuotes));
+        notifyUser("New quote added successfully.");
+        document.getElementById("quoteForm").reset();
+      }
+    }
+  });
