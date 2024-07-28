@@ -202,9 +202,8 @@ function syncWithServer(serverQuotes) {
   const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
   const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
   localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
-  notifyUser("Data has been synced with the server.");
+  notifyUser("Quotes synced with server!");
 }
-
 // Option for manual conflict resolution (UI logic needs to be implemented)
 function manualConflictResolution() {
   // Implement UI logic for manual conflict resolution
