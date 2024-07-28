@@ -211,15 +211,20 @@ function manualConflictResolution() {
 }
 
 // Test fetching and syncing
-async function testSync() {
+async function syncQuotes() {
   const serverQuotes = await fetchQuotesFromServer();
   syncWithServer(serverQuotes);
-  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
-  console.log("Local Quotes after sync:", localQuotes);
 }
 
-// Call testSync to verify the functionality
-testSync();
+// Add a call to syncQuotes in the periodic fetch setup
+function startPeriodicFetch(interval = 60000) {
+  setInterval(async () => {
+    await syncQuotes();
+  }, interval);
+}
+
+// Initial call to sync quotes when the script loads
+syncQuotes();
 
 document
   .getElementById("quoteForm")
