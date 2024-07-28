@@ -35,7 +35,7 @@ const createAddQuoteForm = function () {
     />
     <button onclick="addQuote()">Add Quote</button><br><br>
     <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-    <button onclick="exportToJson()">Export</button>`;
+    <button onclick="exportToJson()">Export Quotes</button>`;
 
   document.body.appendChild(Form);
 };
