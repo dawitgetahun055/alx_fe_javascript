@@ -17,10 +17,39 @@ const Quotes = JSON.parse(localStorage.getItem("quotes")) || [
   },
 ];
 
+document.addEventListener('DOMContentLoaded', ()=> {
+  populateCategories();
+  showRandomQuote();
+
+  const savedCategory = localStorage.getItem("selectedCategory");
+  if(savedCategory) {
+    document.getElementById("categoryFilter").value = savedCategory;
+    filterQuotes();
+  }
+})
+
 function showRandomQuote() {
   const quoteDisplay = document.getElementById("quoteDisplay");
   const randomQuote = Math.floor(Math.random() * Quotes.length);
-  quoteDisplay.innerHTML = `<quotes>${Quotes[randomQuote].text}</quotes>`;
+  quoteDisplay.innerHTML = `<p>${Quotes[randomQuote].text}</p>`;
+}
+
+function populateCategories() {
+  const categoryFilter = document.getElementById("categoryFilter");
+  const categories = [...new Set(Quotes.map(quote => quote.category))];
+
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+
+function filterQuotes() {
+  const selectedCategory = document.getElementById('categoryFilter').value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+  showRandomQuote();
 }
 
 newQuote.addEventListener("click", showRandomQuote);
@@ -46,6 +75,8 @@ function addQuote() {
 
   if (newQuoteText && newQuoteCategory) {
     Quotes.push({ text: newQuoteText, category: newQuoteCategory });
+    localStorage.setItem("quotes" JSON.stringify(Quotes));
+    populateCategories();
     alert("Quote added successfully!");
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
@@ -54,6 +85,14 @@ function addQuote() {
   }
 
   saveQuotes();
+}
+
+function getFilteredQuotes() {
+  const selectedCategory = document.getElementById(categoryFilter).value;
+  if (selectedCategory === "all") {
+    return Quotes;
+  }
+  return Quotes.filter(quote => quote.category === selectedCategory);
 }
 
 function importFromJsonFile(event) {
