@@ -17,16 +17,16 @@ const Quotes = JSON.parse(localStorage.getItem("quotes")) || [
   },
 ];
 
-document.addEventListener('DOMContentLoaded', ()=> {
+document.addEventListener("DOMContentLoaded", () => {
   populateCategories();
   showRandomQuote();
 
   const savedCategory = localStorage.getItem("selectedCategory");
-  if(savedCategory) {
+  if (savedCategory) {
     document.getElementById("categoryFilter").value = savedCategory;
     filterQuotes();
   }
-})
+});
 
 function showRandomQuote() {
   const quoteDisplay = document.getElementById("quoteDisplay");
@@ -36,10 +36,10 @@ function showRandomQuote() {
 
 function populateCategories() {
   const categoryFilter = document.getElementById("categoryFilter");
-  const categories = [...new Set(Quotes.map(quote => quote.category))];
+  const categories = [...new Set(Quotes.map((quote) => quote.category))];
 
-  categories.forEach(category => {
-    const option = document.createElement('option');
+  categories.forEach((category) => {
+    const option = document.createElement("option");
     option.value = category;
     option.textContent = category;
     categoryFilter.appendChild(option);
@@ -47,7 +47,7 @@ function populateCategories() {
 }
 
 function filterQuotes() {
-  const selectedCategory = document.getElementById('categoryFilter').value;
+  const selectedCategory = document.getElementById("categoryFilter").value;
   localStorage.setItem("selectedCategory", selectedCategory);
   showRandomQuote();
 }
@@ -75,7 +75,6 @@ function addQuote() {
 
   if (newQuoteText && newQuoteCategory) {
     Quotes.push({ text: newQuoteText, category: newQuoteCategory });
-    localStorage.setItem("quotes" JSON.stringify(Quotes));
     populateCategories();
     alert("Quote added successfully!");
     document.getElementById("newQuoteText").value = "";
@@ -92,7 +91,7 @@ function getFilteredQuotes() {
   if (selectedCategory === "all") {
     return Quotes;
   }
-  return Quotes.filter(quote => quote.category === selectedCategory);
+  return Quotes.filter((quote) => quote.category === selectedCategory);
 }
 
 function importFromJsonFile(event) {
@@ -121,3 +120,73 @@ function exportToJson() {
   a.click();
   document.body.removeChild(a);
 }
+
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+    return [];
+  }
+}
+
+// Function to periodically fetch data
+function startPeriodicFetch(interval = 60000) {
+  setInterval(async () => {
+    const serverQuotes = await fetchQuotesFromServer();
+    syncWithServer(serverQuotes);
+  }, interval);
+}
+
+function syncWithServer(serverQuotes) {
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+}
+
+// Function to merge local and server quotes
+function mergeQuotes(localQuotes, serverQuotes) {
+  const serverIds = new Set(serverQuotes.map((quote) => quote.id));
+  const newLocalQuotes = localQuotes.filter(
+    (quote) => !serverIds.has(quote.id)
+  );
+  return [...newLocalQuotes, ...serverQuotes];
+}
+
+// Function to notify users of updates
+function notifyUser(message) {
+  const notification = document.createElement("div");
+  notification.className = "notification";
+  notification.innerText = message;
+  document.body.appendChild(notification);
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+// Enhanced sync function with notifications
+function syncWithServer(serverQuotes) {
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+  notifyUser("Data has been synced with the server.");
+}
+
+// Option for manual conflict resolution (UI logic needs to be implemented)
+function manualConflictResolution() {
+  // Implement UI logic for manual conflict resolution
+}
+
+// Test fetching and syncing
+async function testSync() {
+  const serverQuotes = await fetchQuotesFromServer();
+  syncWithServer(serverQuotes);
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  console.log("Local Quotes after sync:", localQuotes);
+}
+
+// Call testSync to verify the functionality
+testSync();
