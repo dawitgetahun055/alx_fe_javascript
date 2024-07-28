@@ -1,6 +1,6 @@
 const newQuote = document.getElementById("newQuote");
 
-const Quotes = [
+const Quotes = JSON.parse(localStorage.getItem("quotes")) || [
   {
     text: '"Behind every great man is a women rolling her eyes."',
     category: "Sarcasm",
@@ -33,19 +33,8 @@ const createAddQuoteForm = function () {
       type="text"
       placeholder="Enter quote category"
     />
-    <button onclick="addQuote()">Add Quote</button>
+    <button onclick="addQuote()">Add Quote</button><br><br>
     <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />`;
-
-  function importFromJsonFile(event) {
-    const fileReader = new FileReader();
-    fileReader.onload = function (event) {
-      const importedQuotes = JSON.parse(event.target.result);
-      Quotes.push(...importedQuotes);
-      saveQuotes();
-      alert("Quotes imported successfully!");
-    };
-    fileReader.readAsText(event.target.files[0]);
-  }
 
   document.body.appendChild(Form);
 };
@@ -64,4 +53,19 @@ function addQuote() {
   } else {
     alert("Please enter both a quote and a category");
   }
+}
+
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (event) {
+    const importedQuotes = JSON.parse(event.target.result);
+    Quotes.push(...importedQuotes);
+    saveQuotes();
+    alert("Quotes imported successfully!");
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(Quotes));
 }
